@@ -1,5 +1,4 @@
 #include "binary_trees.h"
-#include <stddef.h>
 
 /**
  * array_to_bst - Builds a Binary Search Tree (BST) from an array
