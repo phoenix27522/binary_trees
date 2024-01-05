@@ -10,21 +10,19 @@
  */
 
 /* AVL tree insertion function */
-avl_t *avl_insert(avl_t **tree, int value);
-
 avl_t *array_to_avl(int *array, size_t size)
 {
 	if (!array || size == 0)
-		return NULL;
+		return (NULL);
 
 	avl_t *root = NULL;
 
 	for (size_t i = 0; i < size; i++)
 	{
 		if (avl_insert(&root, array[i]) == NULL)
-			return NULL;
+			return (NULL);
 	}
 
-	return root;
+	return (root);
 }
 
