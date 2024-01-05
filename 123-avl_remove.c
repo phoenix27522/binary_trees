@@ -1,32 +1,39 @@
-#include <stdlib.h>
 #include "binary_trees.h"
 
+int minValue(avl_t *node)
+{
+	int minVal = node->n;
+
+	while (node->left != NULL)
+	{
+		minVal = node->left->n;
+		node = node->left;
+	}
+
+	return (minVal);
+}
 /**
- * avl_remove - Removes a node from an AVL tree
- * @root: Pointer to the root node of the tree for removing a node
- * @value: The value to remove in the tree
- *
- * Return: Pointer to the new root node of the tree after removing value
+ * avl_remove - remove a node from a AVL tree
+ * @root: root of the tree
+ * @value: node with this value to remove
+ * Return: the tree changed
  */
 avl_t *avl_remove(avl_t *root, int value)
-{
-	avl_t *temp;
+{	int minVal;
 
-	if (!root)
-		return (NULL);
-
+	if (root == NULL)
+		return (root);
 	if (value < root->n)
 		root->left = avl_remove(root->left, value);
 	else if (value > root->n)
 		root->right = avl_remove(root->right, value);
 	else
 	{
-		if (!root->left || !root->right)
-		{
-			temp = root->left ? root->left : root->right;
-			if (!temp)
-			{
-				temp = root;
+		if (root->left == NULL || root->right == NULL)
+		{	avl_t *temp = root->left ? root->left : root->right;
+
+			if (temp == NULL)
+			{	temp = root;
 				root = NULL;
 			}
 			else
@@ -34,17 +41,26 @@ avl_t *avl_remove(avl_t *root, int value)
 			free(temp);
 		}
 		else
-		{
-			avl_t *temp = root->right;
-
-			while (temp->left)
-				temp = temp->left;
-			root->n = temp->n;
-			root->right = avl_remove(root->right, temp->n);
+		{	minVal = minValue(root->right);
+			root->n = minVal;
+			root->right = avl_remove(root->right, minVal);
 		}
 	}
-	if (!root)
-		return (NULL);
+	if (root == NULL)
+		return (root);
+	int balance = binary_tree_balance(root);
+
+	if (balance > 1 && binary_tree_balance(root->left) >= 0)
+		return (binary_tree_rotate_right(root));
+	if (balance < -1 && binary_tree_balance(root->right) <= 0)
+		return (binary_tree_rotate_left(root));
+	if (balance > 1 && binary_tree_balance(root->left) < 0)
+	{	root->left = binary_tree_rotate_left(root->left);
+		return (binary_tree_rotate_right(root));
+	}
+	if (balance < -1 && binary_tree_balance(root->right) > 0)
+	{	root->right = binary_tree_rotate_right(root->right);
+		return (binary_tree_rotate_left(root));
+	}
 	return (root);
 }
-
